@@ -18,9 +18,13 @@ public class StreamAPIQuestions {
         numList.stream().map(c -> c * c).toList().forEach(System.out::println); //can also use Math.pow()
 
         System.out.println("----------------");
-        System.out.println("Duplicate in a list using stream");
+        System.out.println("Duplicate in a list using stream using hashmap");
         numList.add(10);
         numList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().forEach(System.out::println);
+
+        System.out.println("Duplicate in a list using stream using set");
+        Set<Integer> set = new HashSet<>();
+        numList.stream().filter(c -> !set.add(c)).toList().forEach(System.out::println);
 
 
         System.out.println("----------------");
