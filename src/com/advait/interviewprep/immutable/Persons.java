@@ -1,5 +1,7 @@
 package com.advait.interviewprep.immutable;
 
+import com.advait.interviewprep.singleton.Singelton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,5 +27,10 @@ public final class Persons {
         Persons persons = new Persons();
         System.out.println(persons.getName());
         System.out.println(persons.getNameList());
+
+        //singleton test
+            Singelton singelton = Singelton.getInstance();
+            System.out.println(singelton.getName());
+
     }
 }

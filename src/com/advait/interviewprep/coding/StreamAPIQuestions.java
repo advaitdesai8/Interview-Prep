@@ -3,6 +3,9 @@ package com.advait.interviewprep.coding;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class StreamAPIQuestions {
 
@@ -56,14 +59,50 @@ public class StreamAPIQuestions {
 
         System.out.println("----------------");
         //desc order
-        employees.stream().map(Employee::getAge).sorted(Comparator.reverseOrder()).forEach(System.out::println);
+        employees.stream().flatMap(e -> Stream.of(e.getAge())).sorted(Comparator.reverseOrder()).forEach(System.out::println);
 
         System.out.println("Create hashmap from a list and separate grouped values by ,");
 
-        // Maybe this can be optimized but not sure how
-        Map<Integer, String> map = employees.stream().collect(Collectors.groupingBy(Employee::getAge, Collectors.mapping(Employee::getName, Collectors.toList())))
-                .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> String.join(",", v.getValue())));
+        Map<Integer, String> map = employees.stream().collect(Collectors.groupingBy(Employee::getAge, Collectors.mapping(Employee::getName, Collectors.joining(","))));
+
+        //commented is lengthy
+                //employees.stream().collect(Collectors.groupingBy(Employee::getAge, Collectors.mapping(Employee::getName, Collectors.toList())))
+                //.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, v -> String.join(",", v.getValue())));
         System.out.println(map);
+
+        System.out.println("----------------");
+        System.out.println("Sort keys in hashmap");
+        Map<String, Integer> map1 = new HashMap<>();
+        map1.put("a", 2);
+        map1.put("c", 1);
+        map1.put("b", 6);
+        map1.put("d", 4);
+
+        map1 = map1.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1,
+                 LinkedHashMap::new));
+
+        System.out.println(map1);
+
+        System.out.println("Sort values in hashmap");
+
+        map1 = map1.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                LinkedHashMap::new));
+        System.out.println(map1);
+
+        System.out.println("----------------");
+        System.out.println("Sort entity values in hashmap");
+        Map<String, Employee> employeeMap = new HashMap<>();
+
+        employeeMap.put("c", new Employee("advait", 25));
+        employeeMap.put("a", new Employee("john", 35));
+        employeeMap.put("d", new Employee("beetle", 25));
+        employeeMap.put("e", new Employee("reece", 45));
+        employeeMap.put("b", new Employee("jack", 27));
+
+        System.out.println(employeeMap);
+        employeeMap = employeeMap.entrySet().stream().sorted((Map.Entry.comparingByValue(Comparator.comparing(Employee::getAge)))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        System.out.println(employeeMap);
+
 
         //create hashmap by using a grouping func (sum, avg, etc)
         employees.add(new Employee("beetle", 30));
@@ -77,7 +116,7 @@ public class StreamAPIQuestions {
 
     }
 
-    static class Employee {
+    static class Employee {//implements Comparator<Employee>{
         String name;
         int age;
 
@@ -100,6 +139,19 @@ public class StreamAPIQuestions {
 
         public void setAge(int age) {
             this.age = age;
+        }
+
+
+        public int compare(Employee o1, Employee o2) {
+            return o1.getAge() - o2.getAge();
+        }
+
+        @Override
+        public String toString() {
+            return "Employee{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
         }
     }
 }
